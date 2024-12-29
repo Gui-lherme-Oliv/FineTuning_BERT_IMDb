@@ -143,11 +143,97 @@ Por que Essa Configuração é Importante?:
 
 Com essa configuração, o modelo pré-treinado está pronto para ser ajustado no dataset IMDb, aprendendo os padrões específicos da tarefa de análise de sentimentos.
 
-### 2.7.
+### 2.7. Função personalizada para calcular métricas
+```python
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average="binary")
+    acc = accuracy_score(labels, preds)
+    return {
+        "accuracy": acc,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+    }
+```
+Neste trecho, é criada uma função personalizada para calcular as métricas de avaliação do modelo durante o treinamento e a validação.
 
-### 2.8.
+Entrada e extração das previsões e rótulos:
+- A função recebe um objeto pred, que contém as previsões do modelo (pred.predictions) e os rótulos reais (pred.label_ids).
+- As previsões são processadas com argmax(-1) para selecionar o rótulo mais provável (o índice com maior valor de probabilidade em cada amostra).
 
-### 2.9.
+Cálculo de métricas de desempenho:
+- Precisão (Precision): Mede a proporção de previsões positivas corretas em relação ao total de previsões positivas feitas pelo modelo.
+- Recall: Mede a proporção de verdadeiros positivos capturados em relação ao total de positivos reais no conjunto de dados.
+- F1-Score: Calcula a média harmônica entre precisão e recall, oferecendo uma visão balanceada do desempenho, especialmente útil quando as classes estão desbalanceadas.
+- Acurácia (Accuracy): Mede a proporção de previsões corretas (positivas e negativas) em relação ao total de amostras.
+
+Retorno das métricas: A função retorna as métricas como um dicionário, facilitando sua integração no processo de treinamento com o Trainer.
+
+Por que isso é necessário?
+Durante o treinamento, o Trainer avalia periodicamente o modelo no conjunto de validação. Ter uma função personalizada como essa permite calcular métricas adicionais além da acurácia padrão, como precisão, recall e F1-Score, fornecendo uma visão mais completa do desempenho do modelo na tarefa de classificação de sentimentos.
+
+### 2.8. Configuração do treinamento
+```python
+training_args = TrainingArguments(
+    output_dir="./results",          # Pasta para salvar resultados
+    evaluation_strategy="epoch",    # Avaliação a cada época
+    learning_rate=2e-5,             # Taxa de aprendizado
+    per_device_train_batch_size=16, # Batch size para treino
+    per_device_eval_batch_size=16,  # Batch size para validação
+    num_train_epochs=3,             # Número de épocas
+    weight_decay=0.01,              # Regularização L2 (weight decay)
+    save_strategy="epoch",          # Salvar modelo a cada época
+    logging_dir="./logs",           # Diretório para logs
+    report_to="none",               # Desativa serviços externos (W&B e outros serviços de monitoramento)
+)
+```
+Este trecho define os argumentos necessários para configurar o processo de treinamento do modelo usando a classe TrainingArguments da biblioteca Hugging Face. Esses parâmetros controlam como o treinamento será executado, otimizando o desempenho e a eficiência.
+
+Configurações Importantes:
+Diretórios de Resultados e Logs:
+- output_dir="./results": Define onde os resultados e checkpoints do modelo treinado serão salvos.
+- logging_dir="./logs": Especifica o local para armazenar logs do treinamento, úteis para monitoramento e depuração.
+
+Estratégias de Avaliação e Salvamento:
+- evaluation_strategy="epoch": Realiza avaliação no conjunto de validação ao final de cada época, permitindo acompanhar o desempenho do modelo durante o treinamento.
+- save_strategy="epoch": Salva os checkpoints do modelo ao final de cada época, garantindo que você possa retomar o treinamento ou usar o melhor modelo salvo.
+
+Hiperparâmetros de Treinamento:
+- learning_rate=2e-5: Define a taxa de aprendizado, que controla a velocidade de ajuste dos pesos do modelo. Este valor é tipicamente pequeno para modelos pré-treinados como o BERT, prevenindo oscilações no ajuste fino.
+- weight_decay=0.01: Aplica regularização L2 para evitar overfitting, penalizando pesos excessivamente grandes no modelo.
+- num_train_epochs=3: Especifica o número de passagens completas pelos dados de treinamento, um valor comum para tarefas de ajuste fino.
+- per_device_train_batch_size=16 e per_device_eval_batch_size=16: Determinam o número de amostras processadas por dispositivo (como uma GPU) em cada passo. Um batch menor ajuda a economizar memória, mas pode aumentar o tempo de treinamento.
+
+Monitoramento:
+- report_to="none": Desativa o envio de logs para serviços externos, como Weights & Biases (W&B), mantendo o foco no ambiente local.
+
+Por que isso é necessário?
+Essas configurações permitem controlar todos os aspectos do treinamento, desde o gerenciamento de recursos até o acompanhamento do desempenho e a garantia de salvamento dos resultados. Com essas definições, o processo de fine-tuning é eficiente, bem monitorado e facilmente replicável.
+
+### 2.9. Inicialização do Trainer
+```python
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_data,
+    eval_dataset=val_data,
+    tokenizer=tokenizer,
+    compute_metrics=compute_metrics,  # Passa as métricas personalizadas
+)
+```
+Aqui, o código inicializa o Trainer, uma classe da biblioteca Hugging Face que simplifica o processo de treinamento e avaliação de modelos de linguagem. O Trainer combina todos os componentes previamente configurados para realizar o ajuste fino do modelo.
+
+Componentes do Trainer:
+- model=model: Refere-se ao modelo pré-treinado configurado anteriormente (BERT com uma camada de classificação). O Trainer usará esse modelo para treinar e realizar inferências.
+- args=training_args: Passa os argumentos de treinamento definidos na etapa anterior, como taxa de aprendizado, número de épocas, estratégias de avaliação e diretórios para resultados.
+- train_dataset=train_data e eval_dataset=val_data: Especificam os conjuntos de dados tokenizados para treinamento e validação. O Trainer usará esses datasets para calcular as perdas, ajustar os pesos do modelo e avaliar o desempenho ao final de cada época.
+- tokenizer=tokenizer: Fornece o tokenizador utilizado para preparar os dados. Isso é necessário para garantir que as inferências realizadas durante a validação ou avaliação sigam o mesmo processo de tokenização usado durante o treinamento.
+- compute_metrics=compute_metrics: Passa a função personalizada para cálculo de métricas, como precisão, recall, F1-score e acurácia. Essas métricas serão calculadas durante a validação, fornecendo uma visão detalhada do desempenho do modelo.
+
+Por que isso é importante?
+O Trainer automatiza e gerencia o treinamento, validação e avaliação do modelo, reduzindo significativamente a complexidade de implementação. Ele lida com aspectos como gradiente, otimização e execução em GPU, permitindo que você se concentre mais na análise dos resultados e ajustes do modelo. A integração do tokenizador e da função de métricas garante consistência nos dados e avaliações precisas.
 
 ### 2.10.
 
