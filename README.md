@@ -32,16 +32,38 @@ Com a combinação da biblioteca Hugging Face e o poder do BERT, é possível re
 
 ## 2. Fluxo de trabalho
 ### 2.1. Instalar bibliotecas necessárias
-
-
 ```python
-# Instalar bibliotecas necessárias
 !pip install transformers datasets torch scikit-learn
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, pipeline
 from datasets import load_dataset
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 ```
+Neste trecho de código, o objetivo principal é preparar o ambiente e importar as bibliotecas necessárias para o fine-tuning de um modelo de linguagem pré-treinado, como o BERT, para a tarefa de classificação de sentimentos no conjunto de dados IMDb.
+
+Primeiramente, é realizada a instalação das bibliotecas essenciais, como transformers, que fornece ferramentas para trabalhar com modelos da Hugging Face, datasets, que facilita o carregamento e manipulação de datasets, torch, a biblioteca central para computação em redes neurais, e scikit-learn, que é útil para métricas de avaliação como precisão e recall.
+
+Em seguida, o código importa as classes e funções específicas que serão utilizadas no processo. AutoTokenizer e AutoModelForSequenceClassification são ferramentas da Hugging Face para carregar automaticamente o tokenizador e o modelo pré-treinado adequados para a tarefa de classificação de sequências de texto. A classe Trainer e TrainingArguments são usadas para definir como o modelo será treinado e para gerenciar parâmetros como taxa de aprendizado e número de épocas. A função pipeline é útil para criar um pipeline de inferência fácil de usar. A importação de load_dataset permite carregar o dataset IMDb diretamente, e as métricas accuracy_score e precision_recall_fscore_support da sklearn serão usadas para avaliar o desempenho do modelo treinado.
+
+Esses passos são essenciais para garantir que o código tenha todas as ferramentas necessárias para carregar os dados, treinar o modelo e avaliar seu desempenho de forma eficaz.
+
+### 2.2. Carregamento e Divisão do dataset
+```python
+# Carregamento do dataset IMDb
+dataset = load_dataset("imdb")
+
+# Dividindo em treinamento, validação e teste
+train_data = dataset["train"].train_test_split(test_size=0.1)["train"]
+val_data = dataset["train"].train_test_split(test_size=0.1)["test"]
+test_data = dataset["test"]
+```
+Neste trecho, o foco está no carregamento do dataset IMDb e na preparação dos dados para o processo de treinamento, validação e teste do modelo de classificação de sentimentos.
+
+Carregamento do dataset: A função load_dataset("imdb") é usada para baixar e carregar automaticamente o conjunto de dados IMDb, que é amplamente utilizado em tarefas de análise de sentimentos. Ele contém resenhas de filmes rotuladas como positivas ou negativas, tornando-o adequado para tarefas de classificação binária.
+
+Divisão dos Dados: O conjunto de dados IMDb já vem dividido em partes de treinamento (train) e teste (test), mas aqui o conjunto de treinamento é adicionalmente particionado em uma fração para validação. A função train_test_split é utilizada no conjunto de treinamento original para criar duas subdivisões: uma para treinamento final (train_data) e outra para validação (val_data). Esse particionamento é útil para ajustar os hiperparâmetros e avaliar o modelo durante o treinamento. Por fim, o conjunto de teste (test_data) é deixado intacto para ser usado na avaliação final do desempenho do modelo. Essa separação dos dados em diferentes conjuntos é crucial para garantir que o modelo seja treinado de forma eficaz e que seu desempenho seja avaliado corretamente em dados que ele não viu durante o treinamento.
+
+
 
 
 
