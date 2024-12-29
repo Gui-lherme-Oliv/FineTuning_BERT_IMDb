@@ -1,3 +1,5 @@
+<div align="justify">
+
 # Fine-Tuning com Hugging Face Transformers: Classificação de sentimentos com IMDb
 
 Este é um um exemplo prático de fine-tuning usando o Hugging Face Transformers para ajustar um modelo pré-treinado (como BERT) em uma tarefa de classificação de sentimentos usando o dataset IMDb.
@@ -29,8 +31,19 @@ O fine-tuning é essencial para adaptar modelos pré-treinados a cenários espec
 Com a combinação da biblioteca Hugging Face e o poder do BERT, é possível resolver problemas complexos de PLN de forma eficiente e acessível.
 
 ## 2. Fluxo de trabalho
+### 2.1. Instalar bibliotecas necessárias
+
+
+```python
+# Instalar bibliotecas necessárias
+!pip install transformers datasets torch scikit-learn
+
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, pipeline
+from datasets import load_dataset
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+```
 
 
 
-
+</div>
 
