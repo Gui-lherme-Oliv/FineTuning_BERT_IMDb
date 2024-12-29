@@ -107,9 +107,41 @@ Mapeamento da Função nos Dados:
 
 Esse processo garante que cada texto seja transformado em uma sequência numérica compatível com o modelo BERT. A tokenização também padroniza o comprimento das sequências, o que facilita o processamento em lotes durante o treinamento e a avaliação.
 
-### 2.5.
+### 2.5. Preparação dos dados para o Trainer
+```python
+train_data.set_format(type="torch", columns=["input_ids", "attention_mask", "label"])
+val_data.set_format(type="torch", columns=["input_ids", "attention_mask", "label"])
+test_data.set_format(type="torch", columns=["input_ids", "attention_mask", "label"])
+```
+Neste trecho, o foco é preparar os dados tokenizados para serem utilizados no treinamento e na avaliação do modelo com a classe Trainer.
 
-### 2.6.
+Configuração do Formato de Dados:
+- O método set_format converte os dados para o formato PyTorch (type="torch"), que é necessário para treinar o modelo utilizando o framework PyTorch.
+- As colunas especificadas ("input_ids", "attention_mask" e "label") são as únicas mantidas no dataset para o treinamento. Essas colunas representam:
+    - input_ids: Sequências tokenizadas do texto.
+    - attention_mask: Máscara que indica quais tokens devem ser considerados (1) e quais são padding (0).
+    - label: Rótulo associado a cada exemplo (positivo ou negativo no caso da classificação de sentimentos).
+
+Por que Isso é Necessário?
+- O Trainer da biblioteca transformers espera que os dados estejam em formato PyTorch e contenham essas colunas específicas. Essa configuração garante que as entradas do modelo e os rótulos sejam passados corretamente durante o treinamento e a avaliação.
+
+Ao final dessa etapa, os dados estão no formato adequado para serem processados diretamente pelo modelo durante o treinamento e a validação, mantendo a eficiência e a compatibilidade.
+
+### 2.6. Configuração do modelo
+```python
+model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=2)
+```
+Neste trecho, o objetivo é configurar o modelo pré-treinado para a tarefa específica de classificação de sentimentos.
+
+Carregamento do Modelo Pré-treinado:
+- O método AutoModelForSequenceClassification.from_pretrained é utilizado para carregar o modelo BERT pré-treinado (bert-base-uncased), configurando-o para a tarefa de classificação de sequência.
+- O modelo é ajustado para o número de rótulos da tarefa com o parâmetro num_labels=2, já que o dataset IMDb trata de uma classificação binária (sentimentos positivos ou negativos).
+
+Por que Essa Configuração é Importante?:
+- A arquitetura BERT original é genérica e pode ser usada para várias tarefas de NLP, mas para tarefas específicas como classificação de sentimentos, uma camada adicional de classificação (normalmente uma camada linear) é adicionada ao final. Essa camada mapeia as representações internas do modelo para as probabilidades dos rótulos de saída.
+- O uso de num_labels=2 informa ao modelo que ele deve prever duas classes distintas, ajustando a saída da camada de classificação para atender a esse requisito.
+
+Com essa configuração, o modelo pré-treinado está pronto para ser ajustado no dataset IMDb, aprendendo os padrões específicos da tarefa de análise de sentimentos.
 
 ### 2.7.
 
