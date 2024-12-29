@@ -52,7 +52,7 @@ Esses passos são essenciais para garantir que o código tenha todas as ferramen
 # Carregamento do dataset IMDb
 dataset = load_dataset("imdb")
 
-# Dividindo em treinamento, validação e teste
+# Divisão em treinamento, validação e teste
 train_data = dataset["train"].train_test_split(test_size=0.1)["train"]
 val_data = dataset["train"].train_test_split(test_size=0.1)["test"]
 test_data = dataset["test"]
@@ -61,9 +61,63 @@ Neste trecho, o foco está no carregamento do dataset IMDb e na preparação dos
 
 Carregamento do dataset: A função load_dataset("imdb") é usada para baixar e carregar automaticamente o conjunto de dados IMDb, que é amplamente utilizado em tarefas de análise de sentimentos. Ele contém resenhas de filmes rotuladas como positivas ou negativas, tornando-o adequado para tarefas de classificação binária.
 
-Divisão dos Dados: O conjunto de dados IMDb já vem dividido em partes de treinamento (train) e teste (test), mas aqui o conjunto de treinamento é adicionalmente particionado em uma fração para validação. A função train_test_split é utilizada no conjunto de treinamento original para criar duas subdivisões: uma para treinamento final (train_data) e outra para validação (val_data). Esse particionamento é útil para ajustar os hiperparâmetros e avaliar o modelo durante o treinamento. Por fim, o conjunto de teste (test_data) é deixado intacto para ser usado na avaliação final do desempenho do modelo. Essa separação dos dados em diferentes conjuntos é crucial para garantir que o modelo seja treinado de forma eficaz e que seu desempenho seja avaliado corretamente em dados que ele não viu durante o treinamento.
+Divisão dos Dados: 
+- O conjunto de dados IMDb já vem dividido em partes de treinamento (train) e teste (test), mas aqui o conjunto de treinamento é adicionalmente particionado em uma fração para validação.
+- A função train_test_split é utilizada no conjunto de treinamento original para criar duas subdivisões: uma para treinamento final (train_data) e outra para validação (val_data). Esse particionamento é útil para ajustar os hiperparâmetros e avaliar o modelo durante o treinamento.
+- Por fim, o conjunto de teste (test_data) é deixado intacto para ser usado na avaliação final do desempenho do modelo.
 
+Essa separação dos dados em diferentes conjuntos é crucial para garantir que o modelo seja treinado de forma eficaz e que seu desempenho seja avaliado corretamente em dados que ele não viu durante o treinamento.
 
+### 2.3. Configuração do tokenizador e modelo
+```python
+model_name = "bert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+```
+Neste trecho, o foco é configurar o tokenizador e especificar o modelo pré-treinado que será ajustado para a tarefa de classificação de sentimentos.
+
+Definição do modelo pré-treinado: A variável model_name é definida como "bert-base-uncased", indicando que será usado o modelo BERT em sua versão base, com 12 camadas e sem diferenciação de maiúsculas e minúsculas nos textos (uncased). Essa escolha é apropriada para muitas tarefas de NLP, como análise de sentimentos, por sua robustez e eficácia em entender o contexto das palavras.
+
+Configuração do tokenizador: O AutoTokenizer.from_pretrained(model_name) carrega automaticamente o tokenizador pré-treinado correspondente ao modelo especificado. O tokenizador é responsável por transformar o texto em uma sequência de tokens numéricos que o modelo pode processar. No caso do BERT, isso inclui:
+- Dividir o texto em subpalavras ou palavras inteiras.
+- Adicionar tokens especiais, como [CLS] no início e [SEP] entre ou no final das sequências.
+- Criar máscaras de atenção que indicam quais tokens devem ser considerados no processamento.
+
+Essa etapa é essencial porque o tokenizador garante que o formato dos dados de entrada esteja alinhado com o modelo pré-treinado, mantendo a consistência necessária para o fine-tuning.
+
+### 2.4. Tokenização dos textos
+```python
+def tokenize_function(examples):
+    return tokenizer(examples["text"], truncation=True, padding="max_length", max_length=128)
+
+train_data = train_data.map(tokenize_function, batched=True, remove_columns=["text"])
+val_data = val_data.map(tokenize_function, batched=True, remove_columns=["text"])
+test_data = test_data.map(tokenize_function, batched=True, remove_columns=["text"])
+```
+Neste trecho, a principal tarefa é transformar os textos brutos do dataset em uma representação numérica que o modelo pode processar, utilizando o tokenizador configurado anteriormente. Além disso, os dados são preparados para treinamento, validação e teste.
+
+Definição da Função de Tokenização:
+- A função tokenize_function aplica o tokenizador ao texto de entrada.
+- O parâmetro truncation=True garante que textos mais longos sejam truncados para não exceder o tamanho máximo especificado (neste caso, 128 tokens).
+- O parâmetro padding="max_length" ajusta todas as sequências ao mesmo comprimento (128 tokens), adicionando padding se necessário. Isso é importante para processamento em batch no modelo.
+- O argumento max_length=128 define explicitamente o comprimento máximo das sequências de entrada, equilibrando a quantidade de informações e a eficiência computacional.
+
+Mapeamento da Função nos Dados:
+- A função map aplica a tokenize_function a todas as amostras do conjunto de dados (train_data, val_data e test_data) de forma eficiente e em lotes (batched=True), otimizando o desempenho.
+- O parâmetro remove_columns=["text"] descarta a coluna original de texto após a tokenização, pois o modelo trabalha apenas com a entrada tokenizada.
+
+Esse processo garante que cada texto seja transformado em uma sequência numérica compatível com o modelo BERT. A tokenização também padroniza o comprimento das sequências, o que facilita o processamento em lotes durante o treinamento e a avaliação.
+
+### 2.5.
+
+### 2.6.
+
+### 2.7.
+
+### 2.8.
+
+### 2.9.
+
+### 2.10.
 
 
 
