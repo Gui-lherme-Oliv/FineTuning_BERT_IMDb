@@ -231,9 +231,58 @@ Componentes do Trainer:
 
 O Trainer automatiza e gerencia o treinamento, validação e avaliação do modelo, reduzindo significativamente a complexidade de implementação. Ele lida com aspectos como gradiente, otimização e execução em GPU, permitindo que você se concentre mais na análise dos resultados e ajustes do modelo. A integração do tokenizador e da função de métricas garante consistência nos dados e avaliações precisas.
 
-### 2.10.
+### 2.10. Fine-Tuning (Treinamento do modelo)
+```python
+trainer.train()
+```
+Este trecho executa o treinamento do modelo configurado, iniciando o processo de fine-tuning do BERT para a tarefa de classificação de sentimentos com base nos dados IMDb.
 
+O que acontece durante o treinamento:
+- Processamento dos Dados: O Trainer utiliza o conjunto de dados de treinamento (train_data) e o tokenizador para alimentar o modelo com entradas tokenizadas, máscaras de atenção e rótulos.
+- Ajuste dos Pesos: Durante o treinamento, o modelo passa por iterações (steps) onde:
+    - Calcula-se a função de perda (normalmente Cross-Entropy para classificação).
+    - Realiza-se o backpropagation, ajustando os pesos do modelo com base nos gradientes calculados.
+    - Os pesos são atualizados seguindo a taxa de aprendizado especificada (learning_rate=2e-5) e outros parâmetros de otimização.
+- Avaliação Periódica: Ao final de cada época, o Trainer avalia o modelo usando o conjunto de validação (val_data) para calcular métricas como acurácia, precisão, recall e F1-Score. Isso permite monitorar o desempenho do modelo durante o treinamento.
+- Salvamento de Checkpoints: Conforme configurado em training_args, o modelo é salvo automaticamente ao final de cada época. Esses checkpoints permitem retomar o treinamento ou usar o modelo mais recente.
 
+É necessário para que o fine-tuning ajuste o modelo pré-treinado (BERT) para a tarefa específica de classificação de sentimentos, refinando os pesos para capturar padrões nos dados IMDb. A abstração fornecida pelo Trainer simplifica o processo, garantindo que o treinamento seja eficiente e que o desempenho do modelo seja avaliado de forma contínua.
+
+## 2.11. Avaliação final no conjunto de teste
+```python
+results = trainer.evaluate(test_data)
+print(results)
+```
+Este trecho realiza a avaliação final do modelo no conjunto de teste, verificando seu desempenho em dados que ele nunca viu durante o treinamento ou validação.
+
+Avaliação no Conjunto de Teste: 
+- A função trainer.evaluate(test_data) é usada para calcular as métricas de desempenho do modelo no conjunto de teste.
+- O test_data contém exemplos tokenizados e rotulados, mas que não foram utilizados para ajustar os pesos do modelo ou calibrar hiperparâmetros.
+
+Cálculo das Métricas: 
+- Durante a avaliação, o modelo realiza inferências sobre os dados de teste, gerando previsões.
+- A função de métricas personalizada (compute_metrics) é usada para calcular as principais métricas de desempenho, como acurácia, precisão, recall e F1-score.
+
+Exibição dos Resultados:
+- O dicionário results contém os valores das métricas calculadas. O comando print(results) exibe esses valores, permitindo avaliar a eficácia do modelo em prever corretamente os sentimentos das resenhas no dataset IMDb.
+
+A avaliação no conjunto de teste fornece uma estimativa imparcial do desempenho final do modelo. Isso é crucial para entender sua capacidade de generalização em dados reais e determinar se ele está pronto para uso prático em aplicações de análise de sentimentos.
+
+## 2.12.
+
+## 2.13.
+
+## 2.14.
 
 </div>
+
+
+
+
+
+
+
+
+
+
 
