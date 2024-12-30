@@ -383,7 +383,17 @@ epoch: 3.0
 - Indica que o modelo foi treinado por 3 épocas antes de ser avaliado.
 #
 **Resumo da interpretação**
+
 O modelo ajustado apresenta bom desempenho no conjunto de teste, com alta acurácia (89.12%) e F1-score equilibrado (89.30%), o que indica que ele é eficaz na classificação de sentimentos positivos e negativos. As métricas de precisão e recall mostram que o modelo evita tanto falsos positivos quanto falsos negativos. O tempo de avaliação e a taxa de processamento indicam que a análise foi eficiente.
+#
+**Resultado das previsões**
+
+![image](https://github.com/user-attachments/assets/3fa42eee-0f8b-42d4-b3b9-e5decca3e499)
+**Análise geral**
+- Alta precisão em casos claros: Textos com linguagem explícita (como "fantastic!" ou "terrible") foram classificados com alta confiança, indicando que o modelo funciona bem em exemplos não ambíguos.
+- Textos ambíguos: A previsão para "It’s not my kind of movie, but it was well-made." reflete uma dificuldade do modelo em capturar nuances. Isso pode indicar uma necessidade de mais dados de treinamento com exemplos mistos ou ambíguos.
+- Consistência nas predições: Com exceção do último exemplo, o modelo demonstrou alta confiança e precisão na maioria das análises.
+
 
 </div>
 
