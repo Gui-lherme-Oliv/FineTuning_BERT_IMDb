@@ -238,79 +238,125 @@ trainer.train()
 Este trecho executa o treinamento do modelo configurado, iniciando o processo de fine-tuning do BERT para a tarefa de classificação de sentimentos com base nos dados IMDb.
 
 O que acontece durante o treinamento:
-- Processamento dos Dados: O Trainer utiliza o conjunto de dados de treinamento (train_data) e o tokenizador para alimentar o modelo com entradas tokenizadas, máscaras de atenção e rótulos.
-- Ajuste dos Pesos: Durante o treinamento, o modelo passa por iterações (steps) onde:
+- Processamento dos dados: O Trainer utiliza o conjunto de dados de treinamento (train_data) e o tokenizador para alimentar o modelo com entradas tokenizadas, máscaras de atenção e rótulos.
+- Ajuste dos pesos: Durante o treinamento, o modelo passa por iterações (steps) onde:
     - Calcula-se a função de perda (normalmente Cross-Entropy para classificação).
     - Realiza-se o backpropagation, ajustando os pesos do modelo com base nos gradientes calculados.
     - Os pesos são atualizados seguindo a taxa de aprendizado especificada (learning_rate=2e-5) e outros parâmetros de otimização.
-- Avaliação Periódica: Ao final de cada época, o Trainer avalia o modelo usando o conjunto de validação (val_data) para calcular métricas como acurácia, precisão, recall e F1-Score. Isso permite monitorar o desempenho do modelo durante o treinamento.
-- Salvamento de Checkpoints: Conforme configurado em training_args, o modelo é salvo automaticamente ao final de cada época. Esses checkpoints permitem retomar o treinamento ou usar o modelo mais recente.
+- Avaliação periódica: Ao final de cada época, o Trainer avalia o modelo usando o conjunto de validação (val_data) para calcular métricas como acurácia, precisão, recall e F1-Score. Isso permite monitorar o desempenho do modelo durante o treinamento.
+- Salvamento de checkpoints: Conforme configurado em training_args, o modelo é salvo automaticamente ao final de cada época. Esses checkpoints permitem retomar o treinamento ou usar o modelo mais recente.
 
 É necessário para que o fine-tuning ajuste o modelo pré-treinado (BERT) para a tarefa específica de classificação de sentimentos, refinando os pesos para capturar padrões nos dados IMDb. A abstração fornecida pelo Trainer simplifica o processo, garantindo que o treinamento seja eficiente e que o desempenho do modelo seja avaliado de forma contínua.
 
-## 2.11. Avaliação final no conjunto de teste
+### 2.11. Avaliação final no conjunto de teste
 ```python
 results = trainer.evaluate(test_data)
 print(results)
 ```
 Este trecho realiza a avaliação final do modelo no conjunto de teste, verificando seu desempenho em dados que ele nunca viu durante o treinamento ou validação.
 
-Avaliação no Conjunto de Teste: 
+Avaliação no conjunto de teste: 
 - A função trainer.evaluate(test_data) é usada para calcular as métricas de desempenho do modelo no conjunto de teste.
 - O test_data contém exemplos tokenizados e rotulados, mas que não foram utilizados para ajustar os pesos do modelo ou calibrar hiperparâmetros.
 
-Cálculo das Métricas: 
+Cálculo das métricas: 
 - Durante a avaliação, o modelo realiza inferências sobre os dados de teste, gerando previsões.
 - A função de métricas personalizada (compute_metrics) é usada para calcular as principais métricas de desempenho, como acurácia, precisão, recall e F1-score.
 
-Exibição dos Resultados:
+Exibição dos resultados:
 - O dicionário results contém os valores das métricas calculadas. O comando print(results) exibe esses valores, permitindo avaliar a eficácia do modelo em prever corretamente os sentimentos das resenhas no dataset IMDb.
 
 A avaliação no conjunto de teste fornece uma estimativa imparcial do desempenho final do modelo. Isso é crucial para entender sua capacidade de generalização em dados reais e determinar se ele está pronto para uso prático em aplicações de análise de sentimentos.
 
-## 2.12. Salvar o modelo ajustado (Fine-Tuned)
+### 2.12. Salvar o modelo ajustado (Fine-Tuned)
 ```python
 model.save_pretrained("./fine_tuned_bert")
 tokenizer.save_pretrained("./fine_tuned_bert")
 ```
 Este trecho salva o modelo ajustado e seu tokenizador em um diretório local, tornando-os reutilizáveis sem a necessidade de repetir o processo de treinamento.
 
-Salvar o Modelo:
+Salvar o modelo:
 - O método model.save_pretrained("./fine_tuned_bert") salva o modelo ajustado (com os pesos atualizados após o fine-tuning) no diretório especificado ("./fine_tuned_bert").
 - Isso inclui os pesos treinados, a arquitetura do modelo e as configurações (como o número de rótulos).
 
-Salvar o Tokenizador:
+Salvar o tokenizador:
 - O método tokenizer.save_pretrained("./fine_tuned_bert") salva o tokenizador usado no treinamento no mesmo diretório.
 - Isso inclui o vocabulário, as regras de tokenização e quaisquer configurações específicas (como truncamento ou padding).
 
 Por que isso é importante?
-- Reutilização do Modelo: O modelo ajustado pode ser carregado posteriormente para fazer previsões em novos dados sem necessidade de novo treinamento, economizando tempo e recursos computacionais.
+- Reutilização do modelo: O modelo ajustado pode ser carregado posteriormente para fazer previsões em novos dados sem necessidade de novo treinamento, economizando tempo e recursos computacionais.
 - Compatibilidade com a Hugging Face: A combinação de save_pretrained e from_pretrained permite que o modelo e o tokenizador sejam carregados de maneira direta e consistente em qualquer ambiente, incluindo servidores de produção.
 - Portabilidade: Salvar o modelo localmente facilita seu compartilhamento com outros desenvolvedores ou sua integração em pipelines de NLP.
 
-## 2.13. Inferência com o modelo ajustado e mapeamento de rótulos
+### 2.13. Inferência com o modelo ajustado e mapeamento de rótulos
 ```python
 sentiment_analyzer = pipeline("sentiment-analysis", model="./fine_tuned_bert", tokenizer="./fine_tuned_bert")
 label_map = {"LABEL_0": "NEGATIVE", "LABEL_1": "POSITIVE"}
 ```
 Neste trecho, o modelo ajustado é carregado para realizar inferências em novas entradas de texto, e um mapeamento de rótulos é definido para traduzir as previsões do modelo em valores mais compreensíveis.
 
-Criação do Pipeline de Inferência:
+Criação do pipeline de inferência:
 - A função pipeline("sentiment-analysis", model=..., tokenizer=...) cria um pipeline pré-configurado para a tarefa de análise de sentimentos.
 - O modelo e o tokenizador ajustados são carregados a partir do diretório onde foram salvos ("./fine_tuned_bert"). Isso permite que o pipeline use as configurações específicas do modelo treinado.
 
-Mapeamento de Rótulos:
+Mapeamento de rótulos:
 - O dicionário label_map mapeia os rótulos preditos pelo modelo (por padrão, LABEL_0 e LABEL_1) para rótulos mais interpretáveis:
     - LABEL_0: Representa sentimentos NEGATIVOS.
     - LABEL_1: Representa sentimentos POSITIVOS.
 - Esse mapeamento é importante porque os rótulos padrão (LABEL_0, LABEL_1) podem ser pouco intuitivos, especialmente para usuários finais ou em aplicações práticas.
 
 Por que isso é importante?
-- Facilidade de Uso: O pipeline simplifica o processo de inferência, abstraindo detalhes como pré-processamento e pós-processamento.
+- Facilidade de uso: O pipeline simplifica o processo de inferência, abstraindo detalhes como pré-processamento e pós-processamento.
 - Interpretação: O mapeamento de rótulos torna as saídas do modelo mais claras, facilitando sua utilização em relatórios ou aplicações voltadas para o usuário final.
-- Prontidão para Produção: Com o pipeline configurado, o modelo está pronto para ser utilizado diretamente em aplicações para análise de sentimentos, como chatbots, sistemas de feedback ou monitoramento de mídias sociais.
+- Prontidão para produção: Com o pipeline configurado, o modelo está pronto para ser utilizado diretamente em aplicações para análise de sentimentos, como chatbots, sistemas de feedback ou monitoramento de mídias sociais.
 
-## 2.14.
+### 2.14. Textos para análise
+```python
+texts = [
+    "This movie was fantastic!",
+    "I hated every minute of this film.",
+    "The plot was okay, but the acting was superb.",
+    "I wouldn't recommend this to anyone.",
+    "It was a decent film, not too bad but not great either.",
+    "Absolutely amazing! A masterpiece.",
+    "Terrible, just terrible. A waste of time.",
+    "The visuals were stunning, but the story lacked depth.",
+    "One of the best movies I’ve ever seen!",
+    "It’s not my kind of movie, but it was well-made.",
+]
+
+# Obtenção e formatação das previsões
+for text, prediction in zip(texts, sentiment_analyzer(texts)):
+    label = label_map[prediction["label"]]
+    score = prediction["score"]
+    print(f"text: {text}, label: {label}, score: {score:.4f}")
+```
+Este trecho realiza a inferência sobre uma lista de textos utilizando o modelo ajustado e o pipeline de análise de sentimentos, exibindo os resultados de maneira legível.
+
+Lista de textos para análise:
+- A variável texts contém exemplos de frases que representam diferentes opiniões, variando entre positivas, negativas e neutras. Esses textos serão analisados pelo modelo para determinar o sentimento predominante.
+
+Inferência com o pipeline:
+- O pipeline sentiment_analyzer processa a lista de textos, retornando uma lista de dicionários. Cada dicionário contém:
+    - "label": O rótulo predito pelo modelo (LABEL_0 ou LABEL_1).
+    - "score": A confiança associada à previsão, variando de 0 a 1.
+
+Mapeamento e formatação dos resultados:
+- Para cada texto, o rótulo ("label") é traduzido para uma forma compreensível usando o label_map (ex.: LABEL_0 -> NEGATIVE).
+- O valor de confiança ("score") é formatado com quatro casas decimais, fornecendo uma visão detalhada da confiança do modelo em sua previsão.
+
+Exibição dos resultados:
+- Cada texto, junto com o rótulo de sentimento (positivo ou negativo) e o score, é impresso no console, no formato:
+```python
+text: [texto], label: [sentimento], score: [confiança]
+````
+
+Por que isso é importante?
+- Análise de sentimentos em lote: Permite analisar rapidamente um conjunto de textos, tornando a solução eficiente para aplicações como monitoramento de redes sociais ou análises de reviews.
+- Interpretação do modelo: Exibir o score fornece insights sobre a confiança do modelo, ajudando a avaliar a robustez das previsões.
+- Prontidão para produção: Esse formato é ideal para sistemas que precisam processar grandes volumes de texto e apresentar resultados claros para usuários finais.
+
+## 3. Resultados
 
 </div>
 
