@@ -137,7 +137,7 @@ Carregamento do modelo pré-treinado:
 - O método AutoModelForSequenceClassification.from_pretrained é utilizado para carregar o modelo BERT pré-treinado (bert-base-uncased), configurando-o para a tarefa de classificação de sequência.
 - O modelo é ajustado para o número de rótulos da tarefa com o parâmetro num_labels=2, já que o dataset IMDb trata de uma classificação binária (sentimentos positivos ou negativos).
 
-Por que essa configuração é importante?:
+Por que essa configuração é importante?
 - A arquitetura BERT original é genérica e pode ser usada para várias tarefas de NLP, mas para tarefas específicas como classificação de sentimentos, uma camada adicional de classificação (normalmente uma camada linear) é adicionada ao final. Essa camada mapeia as representações internas do modelo para as probabilidades dos rótulos de saída.
 - O uso de num_labels=2 informa ao modelo que ele deve prever duas classes distintas, ajustando a saída da camada de classificação para atender a esse requisito.
 
@@ -171,8 +171,7 @@ Cálculo de métricas de desempenho:
 
 Retorno das métricas: A função retorna as métricas como um dicionário, facilitando sua integração no processo de treinamento com o Trainer.
 
-Por que isso é necessário?
-Durante o treinamento, o Trainer avalia periodicamente o modelo no conjunto de validação. Ter uma função personalizada como essa permite calcular métricas adicionais além da acurácia padrão, como precisão, recall e F1-Score, fornecendo uma visão mais completa do desempenho do modelo na tarefa de classificação de sentimentos.
+Essa etapa é necessária pois durante o treinamento, o Trainer avalia periodicamente o modelo no conjunto de validação. Ter uma função personalizada como essa permite calcular métricas adicionais além da acurácia padrão, como precisão, recall e F1-Score, fornecendo uma visão mais completa do desempenho do modelo na tarefa de classificação de sentimentos.
 
 ### 2.8. Configuração do treinamento
 ```python
@@ -191,16 +190,15 @@ training_args = TrainingArguments(
 ```
 Este trecho define os argumentos necessários para configurar o processo de treinamento do modelo usando a classe TrainingArguments da biblioteca Hugging Face. Esses parâmetros controlam como o treinamento será executado, otimizando o desempenho e a eficiência.
 
-Configurações Importantes:
-Diretórios de Resultados e Logs:
+Diretórios de resultados e logs:
 - output_dir="./results": Define onde os resultados e checkpoints do modelo treinado serão salvos.
 - logging_dir="./logs": Especifica o local para armazenar logs do treinamento, úteis para monitoramento e depuração.
 
-Estratégias de Avaliação e Salvamento:
+Estratégias de avaliação e salvamento:
 - evaluation_strategy="epoch": Realiza avaliação no conjunto de validação ao final de cada época, permitindo acompanhar o desempenho do modelo durante o treinamento.
 - save_strategy="epoch": Salva os checkpoints do modelo ao final de cada época, garantindo que você possa retomar o treinamento ou usar o melhor modelo salvo.
 
-Hiperparâmetros de Treinamento:
+Hiperparâmetros de treinamento:
 - learning_rate=2e-5: Define a taxa de aprendizado, que controla a velocidade de ajuste dos pesos do modelo. Este valor é tipicamente pequeno para modelos pré-treinados como o BERT, prevenindo oscilações no ajuste fino.
 - weight_decay=0.01: Aplica regularização L2 para evitar overfitting, penalizando pesos excessivamente grandes no modelo.
 - num_train_epochs=3: Especifica o número de passagens completas pelos dados de treinamento, um valor comum para tarefas de ajuste fino.
@@ -209,8 +207,7 @@ Hiperparâmetros de Treinamento:
 Monitoramento:
 - report_to="none": Desativa o envio de logs para serviços externos, como Weights & Biases (W&B), mantendo o foco no ambiente local.
 
-Por que isso é necessário?
-Essas configurações permitem controlar todos os aspectos do treinamento, desde o gerenciamento de recursos até o acompanhamento do desempenho e a garantia de salvamento dos resultados. Com essas definições, o processo de fine-tuning é eficiente, bem monitorado e facilmente replicável.
+Essas configurações são necessárias pois permitem controlar todos os aspectos do treinamento, desde o gerenciamento de recursos até o acompanhamento do desempenho e a garantia de salvamento dos resultados. Com essas definições, o processo de fine-tuning é eficiente, bem monitorado e facilmente replicável.
 
 ### 2.9. Inicialização do Trainer
 ```python
@@ -232,7 +229,6 @@ Componentes do Trainer:
 - tokenizer=tokenizer: Fornece o tokenizador utilizado para preparar os dados. Isso é necessário para garantir que as inferências realizadas durante a validação ou avaliação sigam o mesmo processo de tokenização usado durante o treinamento.
 - compute_metrics=compute_metrics: Passa a função personalizada para cálculo de métricas, como precisão, recall, F1-score e acurácia. Essas métricas serão calculadas durante a validação, fornecendo uma visão detalhada do desempenho do modelo.
 
-Por que isso é importante?
 O Trainer automatiza e gerencia o treinamento, validação e avaliação do modelo, reduzindo significativamente a complexidade de implementação. Ele lida com aspectos como gradiente, otimização e execução em GPU, permitindo que você se concentre mais na análise dos resultados e ajustes do modelo. A integração do tokenizador e da função de métricas garante consistência nos dados e avaliações precisas.
 
 ### 2.10.
