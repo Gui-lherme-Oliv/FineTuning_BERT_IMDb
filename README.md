@@ -356,7 +356,7 @@ Por que isso é importante?
 - Interpretação do modelo: Exibir o score fornece insights sobre a confiança do modelo, ajudando a avaliar a robustez das previsões.
 - Prontidão para produção: Esse formato é ideal para sistemas que precisam processar grandes volumes de texto e apresentar resultados claros para usuários finais.
 
-## 3. Interpretando os resultados
+## 3. Interpretando os resultados das métricas
 Os resultados indicam que o modelo ajustado foi avaliado no conjunto de teste, fornecendo métricas para entender seu desempenho geral. Os valores foram obtidos do dicionário results que contém também os valores das métricas calculadas.
 
 **Métricas de desempenho**
@@ -385,10 +385,12 @@ epoch: 3.0
 **Resumo da interpretação**
 
 O modelo ajustado apresenta bom desempenho no conjunto de teste, com alta acurácia (89.12%) e F1-score equilibrado (89.30%), o que indica que ele é eficaz na classificação de sentimentos positivos e negativos. As métricas de precisão e recall mostram que o modelo evita tanto falsos positivos quanto falsos negativos. O tempo de avaliação e a taxa de processamento indicam que a análise foi eficiente.
-#
-**Resultado das previsões**
+
+## 4. Interpretando os resultados das previsões
+Os resultados das previsões mostram como o modelo ajustado analisou o sentimento de cada texto e atribuiu um rótulo (positivo ou negativo) com um score de confiança associado.
 
 ![image](https://github.com/user-attachments/assets/3fa42eee-0f8b-42d4-b3b9-e5decca3e499)
+
 **Análise geral**
 - Alta precisão em casos claros: Textos com linguagem explícita (como "fantastic!" ou "terrible") foram classificados com alta confiança, indicando que o modelo funciona bem em exemplos não ambíguos.
 - Textos ambíguos: A previsão para "It’s not my kind of movie, but it was well-made." reflete uma dificuldade do modelo em capturar nuances. Isso pode indicar uma necessidade de mais dados de treinamento com exemplos mistos ou ambíguos.
