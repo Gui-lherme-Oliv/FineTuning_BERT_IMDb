@@ -6,7 +6,7 @@ Este é um um exemplo prático de fine-tuning usando o Hugging Face Transformers
 
 ## 1. Introdução
 
-O fine-tuning é uma técnica amplamente utilizada no campo de Processamento de Linguagem Natural (PLN) para adaptar modelos pré-treinados a tarefas específicas. Nesta aplicação, utilizamos a biblioteca Hugging Face Transformers para ajustar o modelo BERT (Bidirectional Encoder Representations from Transformers) em uma tarefa de classificação de sentimentos com o dataset IMDb, um conhecido conjunto de dados contendo avaliações de filmes rotuladas como positivas ou negativas.
+O fine-tuning é uma técnica amplamente utilizada no campo de Processamento de Linguagem Natural (PLN) para adaptar modelos pré-treinados a tarefas específicas. Nesta aplicação, foi utilizada a biblioteca Hugging Face Transformers para ajustar o modelo BERT (Bidirectional Encoder Representations from Transformers) em uma tarefa de classificação de sentimentos com o dataset IMDb, um conhecido conjunto de dados contendo avaliações de filmes rotuladas como positivas ou negativas.
 
 ### 1.1 O que é Hugging Face?
 
@@ -20,9 +20,9 @@ O BERT, desenvolvido pelo Google, é um dos modelos mais influentes no campo de 
 
 Modelos como o BERT são pré-treinados em grandes quantidades de dados genéricos, mas não estão otimizados para tarefas específicas. O fine-tuning ajusta os parâmetros do modelo para que ele performe bem em um conjunto de dados específico, como o IMDb. Isso evita a necessidade de treinar um modelo do zero, economizando tempo e recursos computacionais.
 
-### 1.4. O Dataset IMDb
+### 1.4. O dataset IMDb
 
-O IMDb (Internet Movie Database) é um dos conjuntos de dados mais populares para classificação de sentimentos. Ele contém 50.000 avaliações de filmes em inglês, divididas igualmente entre rótulos positivos e negativos. Este dataset é amplamente usado como benchmark para modelos de PLN em tarefas de análise de sentimentos.
+O IMDb (Internet Movie Database) é um dos conjuntos de dados mais populares para classificação de sentimentos. Ele contém 50.000 avaliações de filmes em inglês, divididas igualmente entre rótulos positivos e negativos. Este dataset é amplamente usado como benchmark (padrão de referência ou ponto de comparação) para modelos de PLN em tarefas de análise de sentimentos.
 
 ### 1.5. Benefícios e Aplicações
 
@@ -61,7 +61,7 @@ Neste trecho, o foco está no carregamento do dataset IMDb e na preparação dos
 
 Carregamento do dataset: A função load_dataset("imdb") é usada para baixar e carregar automaticamente o conjunto de dados IMDb, que é amplamente utilizado em tarefas de análise de sentimentos. Ele contém resenhas de filmes rotuladas como positivas ou negativas, tornando-o adequado para tarefas de classificação binária.
 
-Divisão dos Dados: 
+Divisão dos dados: 
 - O conjunto de dados IMDb já vem dividido em partes de treinamento (train) e teste (test), mas aqui o conjunto de treinamento é adicionalmente particionado em uma fração para validação.
 - A função train_test_split é utilizada no conjunto de treinamento original para criar duas subdivisões: uma para treinamento final (train_data) e outra para validação (val_data). Esse particionamento é útil para ajustar os hiperparâmetros e avaliar o modelo durante o treinamento.
 - Por fim, o conjunto de teste (test_data) é deixado intacto para ser usado na avaliação final do desempenho do modelo.
@@ -95,13 +95,13 @@ test_data = test_data.map(tokenize_function, batched=True, remove_columns=["text
 ```
 Neste trecho, a principal tarefa é transformar os textos brutos do dataset em uma representação numérica que o modelo pode processar, utilizando o tokenizador configurado anteriormente. Além disso, os dados são preparados para treinamento, validação e teste.
 
-Definição da Função de Tokenização:
+Definição da função de tokenização:
 - A função tokenize_function aplica o tokenizador ao texto de entrada.
 - O parâmetro truncation=True garante que textos mais longos sejam truncados para não exceder o tamanho máximo especificado (neste caso, 128 tokens).
 - O parâmetro padding="max_length" ajusta todas as sequências ao mesmo comprimento (128 tokens), adicionando padding se necessário. Isso é importante para processamento em batch no modelo.
 - O argumento max_length=128 define explicitamente o comprimento máximo das sequências de entrada, equilibrando a quantidade de informações e a eficiência computacional.
 
-Mapeamento da Função nos Dados:
+Mapeamento da função nos dados:
 - A função map aplica a tokenize_function a todas as amostras do conjunto de dados (train_data, val_data e test_data) de forma eficiente e em lotes (batched=True), otimizando o desempenho.
 - O parâmetro remove_columns=["text"] descarta a coluna original de texto após a tokenização, pois o modelo trabalha apenas com a entrada tokenizada.
 
