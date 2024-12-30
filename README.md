@@ -246,7 +246,7 @@ O que acontece durante o treinamento:
 - Avaliação periódica: Ao final de cada época, o Trainer avalia o modelo usando o conjunto de validação (val_data) para calcular métricas como acurácia, precisão, recall e F1-Score. Isso permite monitorar o desempenho do modelo durante o treinamento.
 - Salvamento de checkpoints: Conforme configurado em training_args, o modelo é salvo automaticamente ao final de cada época. Esses checkpoints permitem retomar o treinamento ou usar o modelo mais recente.
 
-É necessário para que o fine-tuning ajuste o modelo pré-treinado (BERT) para a tarefa específica de classificação de sentimentos, refinando os pesos para capturar padrões nos dados IMDb. A abstração fornecida pelo Trainer simplifica o processo, garantindo que o treinamento seja eficiente e que o desempenho do modelo seja avaliado de forma contínua.
+O treinamento é necessário para que o fine-tuning ajuste o modelo pré-treinado (BERT) para a tarefa específica de classificação de sentimentos, refinando os pesos para capturar padrões nos dados IMDb. A abstração fornecida pelo Trainer simplifica o processo, garantindo que o treinamento seja eficiente e que o desempenho do modelo seja avaliado de forma contínua.
 
 ### 2.11. Avaliação final no conjunto de teste
 ```python
@@ -301,8 +301,8 @@ Criação do pipeline de inferência:
 
 Mapeamento de rótulos:
 - O dicionário label_map mapeia os rótulos preditos pelo modelo (por padrão, LABEL_0 e LABEL_1) para rótulos mais interpretáveis:
-    - LABEL_0: Representa sentimentos NEGATIVOS.
-    - LABEL_1: Representa sentimentos POSITIVOS.
+    - LABEL_0: Representa sentimentos negativos (NEGATIVE).
+    - LABEL_1: Representa sentimentos positivos (POSITIVE).
 - Esse mapeamento é importante porque os rótulos padrão (LABEL_0, LABEL_1) podem ser pouco intuitivos, especialmente para usuários finais ou em aplicações práticas.
 
 Por que isso é importante?
