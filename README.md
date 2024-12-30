@@ -268,9 +268,47 @@ Exibição dos Resultados:
 
 A avaliação no conjunto de teste fornece uma estimativa imparcial do desempenho final do modelo. Isso é crucial para entender sua capacidade de generalização em dados reais e determinar se ele está pronto para uso prático em aplicações de análise de sentimentos.
 
-## 2.12.
+## 2.12. Salvar o modelo ajustado (Fine-Tuned)
+```python
+model.save_pretrained("./fine_tuned_bert")
+tokenizer.save_pretrained("./fine_tuned_bert")
+```
+Este trecho salva o modelo ajustado e seu tokenizador em um diretório local, tornando-os reutilizáveis sem a necessidade de repetir o processo de treinamento.
 
-## 2.13.
+Salvar o Modelo:
+- O método model.save_pretrained("./fine_tuned_bert") salva o modelo ajustado (com os pesos atualizados após o fine-tuning) no diretório especificado ("./fine_tuned_bert").
+- Isso inclui os pesos treinados, a arquitetura do modelo e as configurações (como o número de rótulos).
+
+Salvar o Tokenizador:
+- O método tokenizer.save_pretrained("./fine_tuned_bert") salva o tokenizador usado no treinamento no mesmo diretório.
+- Isso inclui o vocabulário, as regras de tokenização e quaisquer configurações específicas (como truncamento ou padding).
+
+Por que isso é importante?
+- Reutilização do Modelo: O modelo ajustado pode ser carregado posteriormente para fazer previsões em novos dados sem necessidade de novo treinamento, economizando tempo e recursos computacionais.
+- Compatibilidade com a Hugging Face: A combinação de save_pretrained e from_pretrained permite que o modelo e o tokenizador sejam carregados de maneira direta e consistente em qualquer ambiente, incluindo servidores de produção.
+- Portabilidade: Salvar o modelo localmente facilita seu compartilhamento com outros desenvolvedores ou sua integração em pipelines de NLP.
+
+## 2.13. Inferência com o modelo ajustado e mapeamento de rótulos
+```python
+sentiment_analyzer = pipeline("sentiment-analysis", model="./fine_tuned_bert", tokenizer="./fine_tuned_bert")
+label_map = {"LABEL_0": "NEGATIVE", "LABEL_1": "POSITIVE"}
+```
+Neste trecho, o modelo ajustado é carregado para realizar inferências em novas entradas de texto, e um mapeamento de rótulos é definido para traduzir as previsões do modelo em valores mais compreensíveis.
+
+Criação do Pipeline de Inferência:
+- A função pipeline("sentiment-analysis", model=..., tokenizer=...) cria um pipeline pré-configurado para a tarefa de análise de sentimentos.
+- O modelo e o tokenizador ajustados são carregados a partir do diretório onde foram salvos ("./fine_tuned_bert"). Isso permite que o pipeline use as configurações específicas do modelo treinado.
+
+Mapeamento de Rótulos:
+- O dicionário label_map mapeia os rótulos preditos pelo modelo (por padrão, LABEL_0 e LABEL_1) para rótulos mais interpretáveis:
+    - LABEL_0: Representa sentimentos NEGATIVOS.
+    - LABEL_1: Representa sentimentos POSITIVOS.
+- Esse mapeamento é importante porque os rótulos padrão (LABEL_0, LABEL_1) podem ser pouco intuitivos, especialmente para usuários finais ou em aplicações práticas.
+
+Por que isso é importante?
+- Facilidade de Uso: O pipeline simplifica o processo de inferência, abstraindo detalhes como pré-processamento e pós-processamento.
+- Interpretação: O mapeamento de rótulos torna as saídas do modelo mais claras, facilitando sua utilização em relatórios ou aplicações voltadas para o usuário final.
+- Prontidão para Produção: Com o pipeline configurado, o modelo está pronto para ser utilizado diretamente em aplicações para análise de sentimentos, como chatbots, sistemas de feedback ou monitoramento de mídias sociais.
 
 ## 2.14.
 
