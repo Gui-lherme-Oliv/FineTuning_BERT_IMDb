@@ -356,7 +356,34 @@ Por que isso é importante?
 - Interpretação do modelo: Exibir o score fornece insights sobre a confiança do modelo, ajudando a avaliar a robustez das previsões.
 - Prontidão para produção: Esse formato é ideal para sistemas que precisam processar grandes volumes de texto e apresentar resultados claros para usuários finais.
 
-## 3. Resultados
+## 3. Interpretando os resultados
+Os resultados indicam que o modelo ajustado foi avaliado no conjunto de teste, fornecendo métricas para entender seu desempenho geral. Os valores foram obtidos do dicionário results que contém também os valores das métricas calculadas.
+
+**Métricas de desempenho**
+- eval_loss: 0.4636
+    - Refere-se à perda calculada no conjunto de teste. Uma perda menor geralmente indica que o modelo fez previsões mais próximas dos rótulos reais. Neste caso, o valor é razoavelmente baixo, sugerindo um bom ajuste ao conjunto de teste.
+- eval_accuracy: 0.8912 (89.12%)
+    - Indica a porcentagem de exemplos corretamente classificados pelo modelo. Um valor de quase 90% demonstra que o modelo é confiável para prever sentimentos corretamente.
+- eval_precision: 0.8787 (87.87%)
+    - Mede a proporção de previsões positivas que realmente eram positivas. Alta precisão significa que o modelo evita falsos positivos.
+- eval_recall: 0.9077 (90.77%)
+    - Mede a proporção de exemplos positivos reais que foram corretamente identificados como positivos. Alta recall indica que o modelo evita falsos negativos.
+- eval_f1: 0.8930 (89.30%)
+    - É a média harmônica entre precisão e recall, equilibrando esses dois aspectos. Um F1-score alto indica que o modelo é bem equilibrado entre identificar corretamente os exemplos positivos e evitar erros.
+#
+**Métricas de Desempenho do Processo**
+- eval_runtime: 173.3863 segundos (cerca de 2 minutos e 53 segundos)
+    - O tempo total necessário para avaliar o conjunto de teste.
+- eval_samples_per_second: 144.187
+    - Indica quantas amostras foram processadas por segundo durante a avaliação. Esse valor reflete a eficiência do modelo e da infraestrutura.
+- eval_steps_per_second: 9.015
+    - Mede a quantidade de passos de inferência realizados por segundo. Está relacionado ao desempenho computacional.
+#
+epoch: 3.0
+- Indica que o modelo foi treinado por 3 épocas antes de ser avaliado.
+#
+**Resumo da interpretação**
+O modelo ajustado apresenta bom desempenho no conjunto de teste, com alta acurácia (89.12%) e F1-score equilibrado (89.30%), o que indica que ele é eficaz na classificação de sentimentos positivos e negativos. As métricas de precisão e recall mostram que o modelo evita tanto falsos positivos quanto falsos negativos. O tempo de avaliação e a taxa de processamento indicam que a análise foi eficiente.
 
 </div>
 
