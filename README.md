@@ -196,7 +196,7 @@ Diretórios de resultados e logs:
 
 Estratégias de avaliação e salvamento:
 - evaluation_strategy="epoch": Realiza avaliação no conjunto de validação ao final de cada época, permitindo acompanhar o desempenho do modelo durante o treinamento.
-- save_strategy="epoch": Salva os checkpoints do modelo ao final de cada época, garantindo que você possa retomar o treinamento ou usar o melhor modelo salvo.
+- save_strategy="epoch": Salva os checkpoints do modelo ao final de cada época, garantindo que seja possível retomar o treinamento ou usar o melhor modelo salvo.
 
 Hiperparâmetros de treinamento:
 - learning_rate=2e-5: Define a taxa de aprendizado, que controla a velocidade de ajuste dos pesos do modelo. Este valor é tipicamente pequeno para modelos pré-treinados como o BERT, prevenindo oscilações no ajuste fino.
